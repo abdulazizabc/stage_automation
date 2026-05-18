@@ -25,10 +25,26 @@ public class BasePage {
 
     protected void click(By locator){
 
-        wait.until(ExpectedConditions.elementToBeClickable(locator));
+        wait.until(driver -> {
 
-        driver.findElement(locator).click();
+            try {
 
+                return driver.findElement(locator)
+                        .isDisplayed()
+
+                        &&
+
+                        driver.findElement(locator)
+                                .isEnabled();
+
+            } catch (Exception e){
+
+                return false;
+            }
+        });
+
+        driver.findElement(locator)
+                .click();
     }
 
     protected void type(By locator, String text){
