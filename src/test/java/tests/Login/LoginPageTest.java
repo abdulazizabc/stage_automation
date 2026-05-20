@@ -1,4 +1,4 @@
-package tests;
+package tests.Login;
 
 import helpers.LoginHelper;
 import org.junit.jupiter.api.*;

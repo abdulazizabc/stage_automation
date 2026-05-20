@@ -158,4 +158,27 @@ public class TrailerPage extends BasePage {
         ).isDisplayed();
     }
 
+    //LogOut
+
+    public void openProfileMenu(){
+
+        click(
+                By.cssSelector("button.css-5yfvof")
+        );
+    }
+
+    public void clickLogout(){
+
+        click(
+                By.xpath("//li[contains(.,'Log out')]")
+        );
+    }
+
+    public void confirmLogout(){
+
+        click(
+                By.xpath("//button[contains(.,'Log out')]")
+        );
+    }
+
 }

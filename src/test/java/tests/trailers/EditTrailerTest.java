@@ -54,8 +54,6 @@ public class EditTrailerTest extends BaseTest {
         trailerPage.editProductionYear("2020");
         trailerPage.clickEditTrailerButton();
 
-        System.out.println(unit);
-
         trailerPage.searchTrailer(unit);
 
         assertTrue(trailerPage.isTextVisible(unit));
