@@ -1,4 +1,4 @@
-# aqa-practice
+# Stage - automation
 
 UI-автотесты для staging-приложения [MGKeld](https://stage.app.mgkeld.com) (логин, водители, трейлеры).
 
@@ -25,7 +25,7 @@ UI-автотесты для staging-приложения [MGKeld](https://stage
 
 ```bash
 git clone git@github.com:abdulazizabc/stage_automation.git
-cd aqa-practice
+cd stage - automation
 ```
 
 ### 2. Настроить конфиг
@@ -61,7 +61,7 @@ mvn test -Dtest=CreateTrailerTest
 ## Структура проекта
 
 ```text
-aqa-practice/
+stage - automation/
 ├── pom.xml                          # зависимости и плагины Maven
 ├── README.md                        # эта документация
 │
