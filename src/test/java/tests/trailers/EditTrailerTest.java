@@ -1,70 +1,54 @@
 package tests.trailers;
 
-import Base.BaseTest;
-import helpers.LoginHelper;
+import base.AuthenticatedTest;
 import helpers.TestDataGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import pages.TrailerPage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EditTrailerTest extends BaseTest {
+public class EditTrailerTest extends AuthenticatedTest {
 
-    String unit = TestDataGenerator.generateUnitNumber();
-    String vin = TestDataGenerator.generateVin();
-
-    private LoginHelper loginHelper;
     private TrailerPage trailerPage;
 
     @BeforeEach
-    void setUpPages(){
-
-        loginHelper = new LoginHelper(driver);
-
+    void initPage() {
         trailerPage = new TrailerPage(driver);
-
-        loginHelper.login("account_admin_amazon", "String1!");
     }
 
     @Test
-    void shouldOpenEditTrailerForm() throws InterruptedException {
-        trailerPage.openTrailersPage();
-        trailerPage.clickEditTrailer();
+    void editTrailerSuccess() {
+        String originalUnit = TestDataGenerator.generateUnitNumber();
+        String updatedUnit = TestDataGenerator.generateUnitNumber();
+        String originalVin = TestDataGenerator.generateVin();
+        String updatedVin = TestDataGenerator.generateVin();
 
-        assertTrue(trailerPage.isUnitNumberInputDisplayed());
-    }
-
-    @Test
-    void EditTrailerSuccess() throws InterruptedException {
-        trailerPage.openTrailersPage();
-        trailerPage.clickEditTrailer();
-
-        wait.until(driver ->
-                !driver.findElement(
-                        By.id("unit_number")
-                ).getAttribute("value").isEmpty()
+        trailerPage.createDryVanTrailer(
+                originalUnit,
+                originalVin,
+                "Wabash",
+                "TEST123",
+                "05.20.2027",
+                "AK",
+                "2025"
         );
 
-        trailerPage.editUnit(unit);
+        trailerPage.waitForTrailerUnitInGrid(originalUnit);
+        trailerPage.searchTrailer(originalUnit);
+        trailerPage.clickEditTrailer();
+        trailerPage.waitForEditFormLoaded();
+
+        trailerPage.editUnit(updatedUnit);
         trailerPage.editMake("NewMake");
-        trailerPage.editVin(vin);
+        trailerPage.editVin(updatedVin);
         trailerPage.editProductionYear("2020");
-        trailerPage.clickEditTrailerButton();
+        trailerPage.clickSaveTrailerButton();
+        trailerPage.searchTrailer(updatedUnit);
 
-        trailerPage.searchTrailer(unit);
-
-        assertTrue(trailerPage.isTextVisible(unit));
-
-        assertTrue(trailerPage.isTextVisible("NewMake"));
-
-        assertTrue(trailerPage.isTextVisible(vin));
-
-        assertTrue(trailerPage.isTextVisible("2020"));
-
+        assertTrue(trailerPage.isTrailerUnitVisibleInGrid(updatedUnit), "Updated unit should be visible in grid");
+        assertTrue(trailerPage.isTextVisibleInGrid("NewMake"), "Updated make should be visible in grid");
+        assertTrue(trailerPage.isTextVisibleInGrid(updatedVin), "Updated VIN should be visible in grid");
+        assertTrue(trailerPage.isTextVisibleInGrid("2020"), "Updated production year should be visible in grid");
     }
-
-
 }

@@ -37,4 +37,14 @@ public class TestDataGenerator {
 
         return vin.toString();
     }
+
+    public static String generateUsername(){
+
+        return "AutoUser" + System.currentTimeMillis();
+    }
+
+    public static String generateLicenseNumber(){
+
+        return "LIC" + System.currentTimeMillis();
+    }
 }

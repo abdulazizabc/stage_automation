@@ -1,59 +1,54 @@
 package tests.trailers;
 
-import Base.BaseTest;
-import helpers.LoginHelper;
+import base.AuthenticatedTest;
 import helpers.TestDataGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pages.TrailerPage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CreateTrailerTest extends BaseTest {
+public class CreateTrailerTest extends AuthenticatedTest {
 
-    String unit = TestDataGenerator.generateUnitNumber();
-    String vin = TestDataGenerator.generateVin();
-    private LoginHelper loginHelper;
+    private final String unit = TestDataGenerator.generateUnitNumber();
+    private final String vin = TestDataGenerator.generateVin();
+
     private TrailerPage trailerPage;
 
     @BeforeEach
-    void setUpPages(){
-
-        loginHelper = new LoginHelper(driver);
-
+    void initPage() {
         trailerPage = new TrailerPage(driver);
-
-        loginHelper.login("account_admin_amazon", "String1!");
     }
 
     @Test
-    void shouldOpenAddTrailerForm(){
-
-        trailerPage.openTrailersPage();
-        trailerPage.clickAddTrailer();
-
-        assertTrue(trailerPage.isUnitNumberInputDisplayed());
-    }
-
-    @Test
-    void AddTrailerSuccess(){
-
-        trailerPage.openTrailersPage();
-        trailerPage.clickAddTrailer();
-
-        trailerPage.enterUnit(unit);
-        trailerPage.enterMake("Wabash");
-        trailerPage.enterVin(vin);
-        trailerPage.enterPlate("TEST123");
-        trailerPage.enterPlateExpirationDate("05.20.2027");
-        trailerPage.selectPlateState("AK");
-        trailerPage.enterProductionYear("2025");
-        trailerPage.selectTrailerType("DRY_VAN");
-        trailerPage.clickCreateTrailerButton();
+    void createTrailerSuccess() {
+        trailerPage.createDryVanTrailer(
+                unit,
+                vin,
+                "Wabash",
+                "TEST123",
+                "05.20.2027",
+                "AK",
+                "2025"
+        );
 
         assertTrue(
-                trailerPage.isTrailerCreated(unit)
+                trailerPage.isTrailerUnitVisibleInGrid(unit),
+                "Created trailer unit should appear in the grid"
         );
-    }
 
+        trailerPage.searchTrailer(unit);
+        trailerPage.clickEditTrailer();
+        trailerPage.waitForFieldValue(TrailerPage.UNIT_NUMBER, unit);
+
+        assertEquals(unit, trailerPage.getUnitValue());
+        assertEquals("Wabash", trailerPage.getMakeValue());
+        assertEquals(vin, trailerPage.getVinValue());
+        assertEquals("TEST123", trailerPage.getPlateValue());
+        assertEquals("May 20, 2027", trailerPage.getPlateExpirationValue());
+        assertEquals("AK - Alaska", trailerPage.getPlateStateValue());
+        assertEquals("2025", trailerPage.getProductionYearValue());
+        assertEquals("Dry van", trailerPage.getTrailerTypeValue());
+    }
 }

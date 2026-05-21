@@ -1,184 +1,208 @@
 package pages;
 
-import Base.BasePage;
+import base.BasePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.components.SidebarComponent;
 
 public class TrailerPage extends BasePage {
 
-    public TrailerPage(WebDriver driver){
-        super(driver);
-    }
+    public static final By ADD_TRAILER_BUTTON = By.xpath("//button[contains(.,'Add Trailer')]");
+    public static final By EDIT_TRAILER_BUTTON = By.xpath("//button[contains(.,'Edit')]");
+    public static final By SUBMIT_BUTTON = By.xpath("//button[@type='submit']");
+    public static final By SEARCH_INPUT = By.cssSelector("input[placeholder='Search by Unit#']");
 
-    //Create Trailer
+    public static final By UNIT_NUMBER = By.id("unit_number");
+    public static final By MAKE = By.id("make");
+    public static final By VIN = By.id("vin");
+    public static final By PLATE_NUMBER = By.id("plate_number");
+    public static final By PRODUCTION_YEAR = By.id("production_year");
+    public static final By TRAILER_TYPE = By.id("trailer_type");
+    public static final By PLATE_STATE = By.id("plate_state");
+    public static final By PLATE_EXPIRATION = By.cssSelector("input[placeholder='MM.DD.YYYY']");
+    public static final By PLATE_EXPIRATION_BY_LABEL = By.xpath(
+            "//label[contains(.,'Plate expiration date')]/following::input[@placeholder='MM.DD.YYYY'][1]"
+    );
+    public static final By PLATE_STATE_COMBOBOX = By.xpath("//div[@role='combobox' and @id='plate_state']");
+    public static final By TRAILER_TYPE_COMBOBOX = By.xpath("//div[@role='combobox' and @id='trailer_type']");
+
+    private final SidebarComponent sidebar;
+
+    public TrailerPage(WebDriver driver) {
+        super(driver);
+        this.sidebar = new SidebarComponent(driver);
+    }
 
     public void openTrailersPage() {
+        sidebar.openTrailers();
+    }
 
-        wait.until(driver ->
-                driver.findElement(
-                        By.id("sidebar-trailers")
-                ).isEnabled()
+    public void clickAddTrailer() {
+        click(ADD_TRAILER_BUTTON);
+    }
+
+    public void enterUnit(String unit) {
+        type(UNIT_NUMBER, unit);
+    }
+
+    public void enterMake(String make) {
+        type(MAKE, make);
+    }
+
+    public void enterVin(String vin) {
+        type(VIN, vin);
+    }
+
+    public void enterPlate(String plate) {
+        type(PLATE_NUMBER, plate);
+    }
+
+    public void enterProductionYear(String year) {
+        type(PRODUCTION_YEAR, year);
+    }
+
+    public void selectTrailerType(String type) {
+        selectDropdownByDataValue(TRAILER_TYPE, type);
+    }
+
+    public void selectPlateState(String state) {
+        selectDropdownByDataValue(PLATE_STATE, state);
+    }
+
+    public void enterPlateExpirationDate(String date) {
+        type(PLATE_EXPIRATION, date);
+    }
+
+    public void clickCreateTrailerButton() {
+        click(SUBMIT_BUTTON);
+        waitForTrailerFormClosed();
+    }
+
+    public void createDryVanTrailer(
+            String unit,
+            String vin,
+            String make,
+            String plate,
+            String plateExpiration,
+            String plateState,
+            String productionYear
+    ) {
+        openTrailersPage();
+        clickAddTrailer();
+        enterUnit(unit);
+        enterMake(make);
+        enterVin(vin);
+        enterPlate(plate);
+        enterPlateExpirationDate(plateExpiration);
+        selectPlateState(plateState);
+        enterProductionYear(productionYear);
+        selectTrailerType("DRY_VAN");
+        clickCreateTrailerButton();
+    }
+
+    public boolean isTrailerUnitVisibleInGrid(String unit) {
+        return isDisplayed(trailerUnitCell(unit));
+    }
+
+    private By trailerUnitCell(String unit) {
+        return By.xpath(
+                "//div[@data-field='unit_number' and contains(.,'" + unit + "')]"
         );
-
-        click(By.id("sidebar-trailers"));
     }
 
-    public void clickAddTrailer(){
-
-        click( By.xpath("//button[contains(.,'Add Trailer')]"));
-
-    }
-
-    public boolean isUnitNumberInputDisplayed(){
-
-        return find(By.id("unit_number")).isDisplayed();
-
-    }
-
-    public void enterUnit(String unit){
-
-        type(By.id("unit_number"),unit);
-
-    }
-
-    public void enterMake(String make){
-
-        type(By.id("make"),make);
-
-    }
-
-    public void enterVin(String vin){
-
-        type(By.id("vin"),vin);
-
-    }
-
-    public void enterPlate(String plate){
-
-        type(By.id("plate_number"),plate);
-
-    }
-
-    public void enterProductionYear(String year){
-
-        type(By.id("production_year"),year);
-    }
-
-    public void selectTrailerType(String type){
-
-        click(By.id("trailer_type"));
-
-        click(By.xpath("//li[@data-value='" + type + "']"));
-    }
-
-    public void selectPlateState(String state){
-
-        click(By.id("plate_state"));
-
-        click(By.xpath("//li[@data-value='" + state + "']"));
-    }
-
-    public void enterPlateExpirationDate(String date){
-
-        type(By.cssSelector("input[placeholder='MM.DD.YYYY']"),date);
-
-    }
-
-    public void clickCreateTrailerButton(){
-
-        click(By.xpath("//button[@type='submit']"));
-
-    }
-
-    public boolean isTrailerCreated(String unit){
-
-        return find(By.xpath("//div[@data-field='unit_number' and text()='" + unit + "']")).isDisplayed();
-
-    }
-
-    //Edit Trailer
     public void clickEditTrailer() {
-        click( By.xpath("//button[contains(.,'Edit')]"));
+        click(EDIT_TRAILER_BUTTON);
     }
 
-    public void editUnit(String unit){
-
-        clearAndType(By.id("unit_number"), unit);
-
+    public void editUnit(String unit) {
+        clearAndType(UNIT_NUMBER, unit);
     }
 
-    public void editMake(String make){
-        clearAndType(By.id("make"),make);
+    public void editMake(String make) {
+        clearAndType(MAKE, make);
     }
 
-    public void editVin(String vin){
-        clearAndType(By.id("vin"),vin);
+    public void editVin(String vin) {
+        clearAndType(VIN, vin);
     }
 
-    public void editProductionYear(String year){
-        clearAndType(By.id("production_year"),year);
+    public void editProductionYear(String year) {
+        clearAndType(PRODUCTION_YEAR, year);
     }
 
-    public void clickEditTrailerButton(){
-
-        click(By.xpath("//button[@type='submit']"));
-
+    public void clickSaveTrailerButton() {
+        click(SUBMIT_BUTTON);
+        waitForTrailerFormClosed();
     }
 
-    public boolean isTrailerEdited(String unit){
-
-        return find(By.xpath("//div[@data-field='unit_number' and text()='" + unit + "']")).isDisplayed();
-//                find(By.xpath("//div[@data-field='make' and text()='" + make + "']")).isDisplayed() &&
-//                find(By.xpath("//div[@data-field='vin' and text()='" + vin + "']")).isDisplayed() &&
-//                find(By.xpath("//div[@data-field='production_year' and text()='" + year + "']")).isDisplayed();
-
+    public void waitForTrailerFormClosed() {
+        waitUntilInvisible(UNIT_NUMBER);
+        waitForTrailersList();
     }
 
-    public void searchTrailer(String unit){
-
-        type(
-                By.cssSelector(
-                        "input[placeholder='Search by Unit#']"
-                ),
-                unit
-        );
-
-        find(By.cssSelector("input[placeholder='Search by Unit#']")).sendKeys(Keys.ENTER);
-
+    public void waitForTrailersList() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(SEARCH_INPUT));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".MuiDataGrid-root")));
     }
 
-    public boolean isTextVisible(String text){
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + text + "')]")));
-
-        return find(
-                By.xpath("//*[contains(text(),'" + text + "')]")
-        ).isDisplayed();
+    public void searchTrailer(String unit) {
+        clearAndType(SEARCH_INPUT, unit);
+        find(SEARCH_INPUT).sendKeys(Keys.ENTER);
+        waitForTrailerUnitInGrid(unit);
     }
 
-    //LogOut
-
-    public void openProfileMenu(){
-
-        click(
-                By.cssSelector("button.css-5yfvof")
-        );
+    public void waitForTrailerUnitInGrid(String unit) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(trailerUnitCell(unit)));
     }
 
-    public void clickLogout(){
-
-        click(
-                By.xpath("//li[contains(.,'Log out')]")
-        );
+    public boolean isTextVisibleInGrid(String text) {
+        By cell = By.xpath("//div[contains(@class,'MuiDataGrid-root')]//*[contains(text(),'" + text + "')]");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(cell));
+        return find(cell).isDisplayed();
     }
 
-    public void confirmLogout(){
-
-        click(
-                By.xpath("//button[contains(.,'Log out')]")
-        );
+    public void waitForFieldValue(By locator, String value) {
+        wait.until(driver -> value.equals(find(locator).getAttribute("value")));
     }
 
+    public String getUnitValue() {
+        return find(UNIT_NUMBER).getAttribute("value");
+    }
+
+    public String getMakeValue() {
+        return find(MAKE).getAttribute("value");
+    }
+
+    public String getVinValue() {
+        return find(VIN).getAttribute("value");
+    }
+
+    public String getPlateValue() {
+        return find(PLATE_NUMBER).getAttribute("value");
+    }
+
+    public String getPlateExpirationValue() {
+        return find(PLATE_EXPIRATION_BY_LABEL).getAttribute("value");
+    }
+
+    public String getPlateStateValue() {
+        return find(PLATE_STATE_COMBOBOX).getText();
+    }
+
+    public String getProductionYearValue() {
+        return find(PRODUCTION_YEAR).getAttribute("value");
+    }
+
+    public String getTrailerTypeValue() {
+        return find(TRAILER_TYPE_COMBOBOX).getText();
+    }
+
+    public void waitForEditFormLoaded() {
+        wait.until(driver -> {
+            String value = driver.findElement(UNIT_NUMBER).getAttribute("value");
+            return value != null && !value.isBlank();
+        });
+    }
 }
