@@ -4,49 +4,57 @@ import base.AuthenticatedTest;
 import helpers.TestDataGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import pages.DriverPage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pages.DriverPage.FIRST_NAME;
 
-public class CreateDriverTest extends AuthenticatedTest {
+public class EditDriverTest extends AuthenticatedTest {
 
     private final String firstName = "AutoFirst" + System.currentTimeMillis();
     private final String lastName = "AutoLast" + System.currentTimeMillis();
     private static final String PASSWORD = "AutoPassTest1!";
 
-    private final String username = TestDataGenerator.generateUsername();
-    private final String licenseNumber = TestDataGenerator.generateLicenseNumber();
     private final String email = TestDataGenerator.generateEmail();
+    private final String licenseNumber = TestDataGenerator.generateLicenseNumber();
 
     private DriverPage driverPage;
+
     @BeforeEach
     void initPage() {
         driverPage = new DriverPage(driver);
     }
 
     @Test
-    void createDriverSuccess() throws InterruptedException {
+    void EditDriverSuccess() throws InterruptedException {
+
         driverPage.openDriversPage();
-        driverPage.clickAddDriverButton();
+        driverPage.clickEditButton();
 
-        driverPage.enterFirstName(firstName);
-        driverPage.enterLastName(lastName);
-        driverPage.enterDateOfBirth("12022025");
-        driverPage.enterDriverID("12121");
-        driverPage.enterDriverLicenseNumber(licenseNumber);
-        driverPage.enterDriverLicenseExpiryDate("06262029");
-        driverPage.enterDriverLicenseState("AK - ALASKA");
-        driverPage.enterPhoneNumber("1221212");
-        driverPage.enterEmail(email);
-        driverPage.enterUsername(username);
-        driverPage.enterPassword(PASSWORD);
-        driverPage.enterTGLink("https://t.me/TestGroup");
-        driverPage.enterComment("TestComment");
-        driverPage.enterNoteExpiryDate("06262029");
+        wait.until(driver ->
+                !driver.findElement(
+                        By.id("name")
+                ).getAttribute("value").isEmpty()
+        );
 
-        driverPage.clickCreateDriverButton();
+        driverPage.editFirstName(firstName);
+        driverPage.editLastName(lastName);
+        driverPage.editDateOfBirth("02022004");
+        driverPage.editDriverId("21211");
+        driverPage.editDriverLicenseNumber(licenseNumber);
+        driverPage.editDriverLicenseExpiry("02022029");
+        driverPage.editLicenseState("FL - FLORIDA");
+        driverPage.editPhoneNumber("121212");
+        driverPage.editEmail(email);
+        driverPage.editPassword(PASSWORD);
+        driverPage.editTGLink("https://t.me/NEWTestGroup");
+        driverPage.editNoteExpiryDate("02022029");
+
+        driverPage.clickSaveChangesButton();
+
+        //validation
 
         driverPage.searchDriver(firstName);
         Thread.sleep(3000);
@@ -59,10 +67,6 @@ public class CreateDriverTest extends AuthenticatedTest {
                 driverPage.isDriverVisibleInGrid(lastName),
                 "Created driver last name should appear in the grid"
         );
-        assertTrue(
-                driverPage.isDriverVisibleInGrid(username),
-                "Created driver username should appear in the grid"
-        );
 
         driverPage.clickEditButton();
         wait.until(driver ->
@@ -73,15 +77,14 @@ public class CreateDriverTest extends AuthenticatedTest {
 
         assertEquals(firstName, driverPage.getFirstNameValue());
         assertEquals(lastName, driverPage.getLastNameValue());
-        assertEquals("Dec 2, 2025", driverPage.getDateOfBirthValue());
-        assertEquals("12121", driverPage.getDriverIDValue());
+        assertEquals("Feb 2, 2004", driverPage.getDateOfBirthValue());
+        assertEquals("21211", driverPage.getDriverIDValue());
         assertEquals(licenseNumber, driverPage.getDriverLicenseNumberValue());
-        assertEquals("Jun 26, 2029", driverPage.getDriverLicenseExpiryValue());
-        assertEquals("1221212", driverPage.getPhoneNumberValue());
+        assertEquals("Feb 2, 2029", driverPage.getDriverLicenseExpiryValue());
+        assertEquals("121212", driverPage.getPhoneNumberValue());
         assertEquals(email, driverPage.getEmailValue());
-        assertEquals(username, driverPage.getUsernameValue());
         assertEquals(PASSWORD, driverPage.getPasswordValue());
-        assertEquals("https://t.me/TestGroup", driverPage.getTGLinkValue());
-        assertEquals("Jun 26, 2029", driverPage.getNoteExpiryDateValue());
+        assertEquals("https://t.me/NEWTestGroup", driverPage.getTGLinkValue());
+        assertEquals("Feb 2, 2029", driverPage.getNoteExpiryDateValue());
     }
 }

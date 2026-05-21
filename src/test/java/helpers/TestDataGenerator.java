@@ -47,4 +47,8 @@ public class TestDataGenerator {
 
         return "LIC" + System.currentTimeMillis();
     }
+
+    public static String generateEmail() {
+        return "autotest" + System.currentTimeMillis() + "@gmail.com";
+    }
 }
